@@ -15,17 +15,13 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from time import sleep
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtWidgets import QLCDNumber, QLabel
 from PyQt5.QtGui import QPixmap
 from random import randrange
-from time import monotonic
-import sys
-import time
-import os
 
 is_played = False
+
 
 class Osuu(QWidget):
     def __init__(self, L):
@@ -181,15 +177,16 @@ class Osuu(QWidget):
         self.button.clicked.connect(self.next_btn)
         self.button.hide()
 
-        #achievements
+        # achievements
         self.osu_achievement = QLabel(self)
         self.osu_achievement.resize(260, 70)
-        # self.osu_achievement.move(0, 0)
+        self.osu_achievement.move(-300, 0)
         self.osu_achievement.setPixmap(QPixmap('./texture/achievements_texture/osu.png'))
         self.osu_achievement.hide()
 
         self.count_20 = QLabel(self)
         self.count_20.resize(260, 70)
+        self.count_20.move(-300, 0)
         self.count_20.setPixmap(QPixmap('./texture/achievements_texture/right_on_target'))
         self.count_20.hide()
 
@@ -203,7 +200,7 @@ class Osuu(QWidget):
         self.button.show()
 
         self.timer = 16
-        self.count = 15
+        self.count = 0
         self.count_text_print.setText('0')
         self.tick_timer()
 
@@ -216,7 +213,7 @@ class Osuu(QWidget):
 
     def tick_timer(self):
         if self.timer > 0:
-            self.timer -= 1  # Устанавливаем значение на 1 меньше
+            self.timer -= 1
 
             self.time_text_print.setText(str(self.timer))
 
@@ -225,7 +222,7 @@ class Osuu(QWidget):
             self.start_btn.setEnabled(False)
             self.button.setEnabled(True)
 
-            QTimer().singleShot(1000, self.tick_timer)  # Засекаем таймер - значение в милисекундах
+            QTimer().singleShot(1000, self.tick_timer)
         else:
             if self.count > self.record:
                 self.record = self.count
@@ -247,8 +244,8 @@ class Osuu(QWidget):
         self.count_text_print.setText(str(self.count))
 
     def osu_play(self):
+        self.osu_achievement.hide()
         self.osu_achievement.move(0, 0)
-        self.osu_achievement.show()
 
         animation_curve = QEasingCurve.InQuad
 
@@ -263,6 +260,7 @@ class Osuu(QWidget):
         self.animation3.setKeyValueAt(0, QPoint(0, 0))
 
         animation1.start()
+        self.osu_achievement.show()
         self.osu_achievement_timer()
 
     def osu_achievement_timer(self):
@@ -275,8 +273,8 @@ class Osuu(QWidget):
             self.animation3.start()
 
     def count_20_achievement(self):
+        self.count_20.hide()
         self.count_20.move(0, 0)
-        self.count_20.show()
 
         animation_curve = QEasingCurve.InQuad
 
@@ -291,6 +289,7 @@ class Osuu(QWidget):
         self.animation3_1.setKeyValueAt(0, QPoint(0, 0))
 
         animation1.start()
+        self.count_20.show()
         self.count_20_achievement_timer()
 
     def count_20_achievement_timer(self):

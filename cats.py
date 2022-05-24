@@ -14,15 +14,10 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
-from time import sleep
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
 from PyQt5.QtWidgets import QLCDNumber, QLabel
 from PyQt5.QtGui import QPixmap
 from random import *
-from time import monotonic
-import sys
-import time
-import os
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QWidget
 from PyQt5.QtCore import QSize
@@ -31,8 +26,8 @@ is_played = False
 
 
 class Cat(QWidget):
-    def __init__(self, L):
-        self.L = L
+    def __init__(self, list_of_achievements):
+        self.list_of_achievements = list_of_achievements
         self.is_played = is_played
         super().__init__()
         self.initUI()
@@ -50,8 +45,6 @@ class Cat(QWidget):
         self.count_player_2 = 0
 
         self.end_game = True
-
-        self.letter = 'D'
 
         self.fish_list = [1, 1, 1, -2, -2]
         self.fish_here = 1
@@ -156,7 +149,6 @@ class Cat(QWidget):
 
         # Создание победного текста
         self.red_win_text = QLabel(self)
-        # red_win = QPixmap('./texture/cats_texture/red_win_text.png')
         self.red_win_text.setPixmap(QPixmap('./texture/cats_texture/red_win_text.png'))
         self.red_win_text.move(150, 350)
         self.red_win_text.hide()
@@ -170,19 +162,19 @@ class Cat(QWidget):
         # Achievements
         self.cats_achievements = QLabel(self)
         self.cats_achievements.resize(260, 70)
-        # self.cats_achievements.move(0, 0)
+        self.cats_achievements.move(-300, 0)
         self.cats_achievements.setPixmap(QPixmap('./texture/achievements_texture/cats_played.png'))
         self.cats_achievements.hide()
 
         self.golodomor = QLabel(self)
         self.golodomor.resize(260, 70)
-        # self.golodomor.move(0, 0)
+        self.golodomor.move(-300, 0)
         self.golodomor.setPixmap(QPixmap('./texture/achievements_texture/golodomor.png'))
         self.golodomor.hide()
 
     def start(self):
         if not self.is_played:
-            self.L[4] = True
+            self.list_of_achievements[4] = True
             self.is_played = True
             self.in_cats_animation()
 
@@ -251,8 +243,8 @@ class Cat(QWidget):
                     self.count_player_1 += self.count_fish
                     if self.count_player_1 == self.win_count:
                         self.win(1)
-                    if (self.count_player_1 <= -20) and not self.L[5]:
-                        self.L[5] = True
+                    if (self.count_player_1 <= -20) and not self.list_of_achievements[5]:
+                        self.list_of_achievements[5] = True
                         self.golodomor_animation()
                     self.count_player_1_text.setText('<b>' + str(self.count_player_1) + '</b>')
                     self.time_fish_is_active = 0
@@ -268,8 +260,8 @@ class Cat(QWidget):
                     self.count_player_2 += self.count_fish
                     if self.count_player_2 == self.win_count:
                         self.win(2)
-                    if (self.count_player_2 <= -20) and not self.L[5]:
-                        self.L[5] = True
+                    if (self.count_player_2 <= -20) and not self.list_of_achievements[5]:
+                        self.list_of_achievements[5] = True
                         self.golodomor_animation()
                     self.count_player_2_text.setText('<b>' + str(self.count_player_2) + '</b>')
                     self.time_fish_is_active = 0
@@ -337,8 +329,8 @@ class Cat(QWidget):
         self.start_btn.setEnabled(False)
 
     def in_cats_animation(self):
+        self.cats_achievements.hide()
         self.cats_achievements.move(0, 0)
-        self.cats_achievements.show()
 
         animation_curve = QEasingCurve.InQuad
 
@@ -353,6 +345,7 @@ class Cat(QWidget):
         self.animation3.setKeyValueAt(0, QPoint(0, 0))
 
         animation1.start()
+        self.cats_achievements.show()
         self.cats_achievement_timer()
 
     def cats_achievement_timer(self):
@@ -365,8 +358,8 @@ class Cat(QWidget):
             self.animation3.start()
 
     def golodomor_animation(self):
+        self.golodomor.hide()
         self.golodomor.move(0, 0)
-        self.golodomor.show()
 
         animation_curve = QEasingCurve.InQuad
 
@@ -381,6 +374,7 @@ class Cat(QWidget):
         self.animation3_1.setKeyValueAt(0, QPoint(0, 0))
 
         animation1.start()
+        self.golodomor.show()
         self.golodomor_animation_timer()
 
     def golodomor_animation_timer(self):
